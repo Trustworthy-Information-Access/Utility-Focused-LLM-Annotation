@@ -15,11 +15,13 @@ Our experiments reveal that: (1) Retrievers trained on utility-focused annotatio
 However, incorporating just 20% human-annotated data enables retrievers trained with utility-focused annotations to match the performance of models trained entirely with human annotations, while adding 100% human annotations further significantly enhances performance on both tasks.
 We hope our work inspires others to design automated annotation solutions using LLMs, especially when human annotations are unavailable. 
 
-# LLMs Annotations
-The prompts used in our paper are shown in prompts.md. All annotated labels can be downloaded in [Huggiface hub](https://huggingface.co/hengranZhang/Utility_focused_annotation).
-
 # Download dataset 
-We use in-domain settings ([MSMARCO v1 and TREC-DL](https://microsoft.github.io/msmarco/Datasets)) and out-of-domain settings ([BEIR](https://github.com/beir-cellar/beir)) on both the retrieval and RAG tasks. 
+We utilize in-domain settings ([MSMARCO v1 and TREC-DL](https://microsoft.github.io/msmarco/Datasets)) and out-of-domain settings ([BEIR](https://github.com/beir-cellar/beir)) on both the retrieval and RAG tasks. 
+
+# LLMs Annotations
+We use the hard negative samples provided by [Tevatron](https://www.dropbox.com/scl/fi/pkm1mtgfobae9kuesp7dr/train-tevatron.jsonl?rlkey=2thutc4zkozr9jp4zbbrz5rvi&dl=0). 
+The prompts used in our paper are shown in prompts.md. 
+All annotated labels can be downloaded in [Huggiface hub](https://huggingface.co/hengranZhang/Utility_focused_annotation).
 
 # Retrievers Training 
 We use the RetroMAE as our retriever backbone, which can be downloaded on [RetroMAE Pre-training on MSMARCO Passage](https://github.com/staoxiao/RetroMAE/blob/master/examples/pretrain/README.md)
