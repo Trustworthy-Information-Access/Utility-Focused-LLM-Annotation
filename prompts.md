@@ -12,14 +12,14 @@ Directly output the passages you selected that are relevant to the question. The
 
 # Utility selection:
 
-## speudo Answer generation:
+## Pseudo Answer generation:
 ```
 user: f"You are a faithful question and answer assistant. Answer the question based on the given information with one or few sentences without the source."
 assistant: Yes, i am the faithful question and answer assistant.
 user: f"Given the information: \n{pas}\n Answer the following question based on the given information with one or few sentences without the source.\n Question: {question}\n\n Answer:"
 ```
 
-## utility selection:
+## Utility selection:
 ```
 user: You are the utility judger, an intelligent assistant that can select the passages that have utility in answering the question.
 assistant: 'Yes, i am the utility judger.
@@ -32,14 +32,14 @@ f"Question: {query}. \n Reference answer: {answer}. \n\n The requirements for ju
 Directly output the passages you selected that have utility in generating the reference answer to the question. The format of the output is: 'My selection:[[i],[j],...].'. Only response the selection results, do not say any word or explain. 
 ```
 
-## utility selection:
-## speudo Answer generation:
+# Utility selection:
+## Pseudo Answer generation:
 ```
 user: f"You are a faithful question and answer assistant. Answer the question based on the given information with one or few sentences without the source."
 assistant: Yes, i am the faithful question and answer assistant.
 user: f"Given the information: \n{pas}\n Answer the following question based on the given information with one or few sentences without the source.\n Question: {question}\n\n Answer:"
 ```
-## utility ranking:
+## Utility ranking:
 ```
 user: You are RankGPT, an intelligent assistant that can rank passages based on their utility in generating the given reference answer to the question.
 assistant: 'Yes, i am RankGPT.
