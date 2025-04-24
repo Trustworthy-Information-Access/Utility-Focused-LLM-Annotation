@@ -32,7 +32,7 @@ f"Question: {query}. \n Reference answer: {answer}. \n\n The requirements for ju
 Directly output the passages you selected that have utility in generating the reference answer to the question. The format of the output is: 'My selection:[[i],[j],...].'. Only response the selection results, do not say any word or explain. 
 ```
 
-# Utility selection:
+# Utility ranking:
 ## Pseudo Answer generation:
 ```
 user: f"You are a faithful question and answer assistant. Answer the question based on the given information with one or few sentences without the source."
