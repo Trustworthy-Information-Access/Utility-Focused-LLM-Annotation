@@ -1,7 +1,7 @@
 # Relevance selection:
 ```
 user: You are the relevance judger, an intelligent assistant that can select the passages that relevant to the question.
-assistant: Yes, i am the utility judger.
+assistant: Yes, i am the relevance judger.
 user: f"I will provide you with {num} passages, each indicated by number identifier []. \nSelect the passages that are relevant to the question: {query}.
 assistant: Okay, please provide the passages.
 user: f"[{rank}] {passage}"
