@@ -1,10 +1,10 @@
 model_path="model/retromae"
 echo "====== retromae_bn128epoch4"
-corpus_file="examples/retriever/msmarco/data/BertTokenizer_data/corpus"
-train_query_file="examples/retriever/msmarco/data/BertTokenizer_data/train_query"
-train_qrels="examples/retriever/msmarco/data/BertTokenizer_data/postive_real.tsv"
-neg_file="examples/retriever/msmarco/data/BertTokenizer_data/train_negs.tsv"
-teacher_score="teacher_score/score_v2_binray.txt"
+corpus_file=""
+train_query_file=""
+train_qrels=""
+neg_file=""
+teacher_score=""
 output_model="./models/retromae_bn128epoch4_l3"
 mkdir $output_model # --stop_after_n_steps 1000 \
 torchrun --nproc_per_node 8  --master_port 12349  \
