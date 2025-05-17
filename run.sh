@@ -7,7 +7,7 @@ teacher_score=""
 output_model="./models/"
 mkdir $output_model 
 torchrun --nproc_per_node 8  --master_port 12349  \
-    -m src.bi_encoder.run \
+    -m bi_encoder.run \
     --output_dir $output_model \
     --model_name_or_path $model_path \
     --do_train  \
