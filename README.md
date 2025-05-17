@@ -3,17 +3,7 @@
 # Overview
 This repository contains the code, datasets models used in our paper: "Leveraging LLMs for Utility-Focused Annotation: Reducing Manual Effort for Retrieval and RAG". 
 
-Retrieval models typically rely on costly human-labeled query-document relevance annotations for training and evaluation. 
-To reduce this cost and leverage the potential of Large Language Models (LLMs) in relevance judgments, we aim to explore whether LLM-generated annotations can effectively replace human annotations in training retrieval models. 
-Retrieval usually emphasizes relevance, which indicates ``topic-relatedness'' of a document to a query, while in RAG, the value of a document (or utility), depends on how it contributes to answer generation. 
-Recognizing this mismatch, some researchers use LLM performance on downstream tasks with documents as labels, but this approach requires manual answers for specific tasks, leading to high costs and limited generalization. 
-In another line of work, prompting LLMs to select useful documents as RAG references eliminates the need for human annotation and is not task-specific. If we leverage LLMs’ utility judgments to annotate retrieval data, we may retain cross-task generalization without human annotation in large-scale corpora. 
-Therefore, we investigate utility-focused annotation via LLMs for large-scale retriever training data across both in-domain and out-of-domain settings on the retrieval and RAG tasks. 
-To reduce the impact of low-quality positives labeled by LLMs, we design a novel loss function, i.e., \orfunction. 
-Our experiments reveal that: (1) Retrievers trained on utility-focused annotations significantly outperform those trained on human annotations in the out-of-domain setting on both tasks, demonstrating superior generalization capabilities. 
-(2) LLM annotation does not replace human annotation in the in-domain setting. 
-However, incorporating just 20% human-annotated data enables retrievers trained with utility-focused annotations to match the performance of models trained entirely with human annotations, while adding 100% human annotations further significantly enhances performance on both tasks.
-We hope our work inspires others to design automated annotation solutions using LLMs, especially when human annotations are unavailable. 
+This paper explores the use of large language models (LLMs) for annotating document utility in training retrieval and retrieval-augmented generation (RAG) systems, aiming to reduce dependence on costly human annotations. We address the gap between retrieval relevance and generative utility by employing LLMs to annotate document utility. To effectively utilize multiple positive samples per query, we introduce a novel loss that maximizes their summed marginal likelihood. Using the Qwen-2.5-32B model, we annotate utility on the MS MARCO dataset and conduct retrieval experiments on MS MARCO and BEIR, as well as RAG experiments on MS MARCO QA, NQ, and HotpotQA. Our results show that LLM-generated annotations enhance out-of-domain retrieval performance and improve RAG outcomes compared to models trained solely on human annotations or downstream QA metrics. Furthermore, combining LLM annotations with just 20\% of human labels achieves performance comparable to using full human annotations. Our study offers a comprehensive approach to utilizing LLM annotations for initializing QA systems on new corpora. 
 
 # Download dataset 
 We utilize in-domain settings ([MSMARCO v1 and TREC-DL](https://microsoft.github.io/msmarco/Datasets)) and out-of-domain settings ([BEIR](https://github.com/beir-cellar/beir)) on both the retrieval and RAG tasks. 
