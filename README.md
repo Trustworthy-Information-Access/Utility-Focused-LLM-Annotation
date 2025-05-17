@@ -21,17 +21,18 @@ We utilize in-domain settings ([MSMARCO v1 and TREC-DL](https://microsoft.github
 # LLMs Annotations
 We use the hard negative samples provided by [Tevatron](https://www.dropbox.com/scl/fi/pkm1mtgfobae9kuesp7dr/train-tevatron.jsonl?rlkey=2thutc4zkozr9jp4zbbrz5rvi&dl=0). 
 The prompts used in our paper are shown in prompts.md. 
-All annotated labels can be downloaded in [Huggiface hub](https://huggingface.co/hengranZhang/Utility_focused_annotation).
+All LLM annotated positive labels are shown in labels/.
 
 # Retrievers Training 
-We use the RetroMAE as our retriever backbone, which can be downloaded on [RetroMAE Pre-training on MSMARCO Passage](https://github.com/staoxiao/RetroMAE/blob/master/examples/pretrain/README.md)
+We use the RetroMAE and Contriever as our retriever backbone, which can be downloaded on [RetroMAE Pre-training on MSMARCO Passage](https://github.com/staoxiao/RetroMAE/blob/master/examples/pretrain/README.md) and [Contriever](https://huggingface.co/facebook/contriever)
 
 ```
 sh run.sh
 ```
 
 # Checkpoint
-Retriever trained on different annotations can be directly downloaded in [Huggiface hub](https://huggingface.co/hengranZhang/Utility_focused_annotation)
+Currently, the model's checkpoint is in the author's Huggiface account. After the anonymity period, we will add the corresponding link.
+
 
 
 
