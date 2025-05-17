@@ -21,7 +21,7 @@ We utilize in-domain settings ([MSMARCO v1 and TREC-DL](https://microsoft.github
 # LLMs Annotations
 We use the hard negative samples provided by [Tevatron](https://www.dropbox.com/scl/fi/pkm1mtgfobae9kuesp7dr/train-tevatron.jsonl?rlkey=2thutc4zkozr9jp4zbbrz5rvi&dl=0). 
 The prompts used in our paper are shown in prompts.md. 
-All LLM annotated positive labels are shown in labels/.
+
 
 # Retrievers Training 
 We use the RetroMAE and Contriever as our retriever backbone, which can be downloaded on [RetroMAE Pre-training on MSMARCO Passage](https://github.com/staoxiao/RetroMAE/blob/master/examples/pretrain/README.md) and [Contriever](https://huggingface.co/facebook/contriever)
@@ -31,7 +31,7 @@ sh run.sh
 ```
 
 # Checkpoint
-Currently, the model's checkpoint is in the author's Huggiface account. After the anonymity period, we will add the corresponding link.
+Currently, all the LLM annotated positive labels and the models' checkpoints are in the author's huggingface account. After the anonymity period, we will add the corresponding link.
 
 
 
