@@ -9,7 +9,7 @@ This paper explores the use of large language models (LLMs) for annotating docum
 We utilize in-domain settings ([MSMARCO v1 and TREC-DL](https://microsoft.github.io/msmarco/Datasets)) and out-of-domain settings ([BEIR](https://github.com/beir-cellar/beir)) on both the retrieval and RAG tasks. 
 
 # LLMs Annotations
-We use the hard negative samples provided by [Tevatron](https://www.dropbox.com/scl/fi/pkm1mtgfobae9kuesp7dr/train-tevatron.jsonl?rlkey=2thutc4zkozr9jp4zbbrz5rvi&dl=0). 
+We use the hard negative samples provided by [Tevatron official's repository](https://www.dropbox.com/scl/fi/pkm1mtgfobae9kuesp7dr/train-tevatron.jsonl?rlkey=2thutc4zkozr9jp4zbbrz5rvi&dl=0). 
 The prompts used in our paper are shown in prompts.md. 
 
 
