@@ -21,7 +21,7 @@ sh run.sh
 ```
 
 # Checkpoint
-Currently, all the LLM annotated positive labels and the models' checkpoints are in the author's huggingface account. After the anonymity period, we will add the corresponding link.
+Currently, all the LLM annotated positive labels and the models' checkpoints are in the [Hugging Face](hengranZhang/Utility_focused_annotation).
 
 
 
