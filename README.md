@@ -1,4 +1,5 @@
-# utility-focused-annotation
+# Utility-focused-annotation
+[🎉 2025-08] Our paper "Utility-Focused LLM Annotation for Retrieval and Retrieval-Augmented Generation" has been accepted at #EMNLP25 for the main conference! 
 
 # Overview
 This repository contains the code, datasets models used in our paper: "Utility-Focused LLM Annotation for Retrieval and Retrieval-Augmented Generation". 
