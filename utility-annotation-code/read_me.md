@@ -17,10 +17,10 @@
    ```
    model_name_or_path="models/Qwen/Qwen3-32B/"
    dataset_path="results/annotation_candidate.json"
-   output_dir="results/annotation_answers.jsonl"
+   output_dir="results/annotation_answer.jsonl"
    mkdir $output_dir
    train_group_size=16
-   python pseudo_answers.py --model_name_or_path $model_name_or_path --dataset_path $dataset_path --train_group_size $train_group_size --batch_size 4096 --output_dir $output_dir
+   python pseudo_answer.py --model_name_or_path $model_name_or_path --dataset_path $dataset_path --train_group_size $train_group_size --batch_size 4096 --output_dir $output_dir
    ```
    
    
