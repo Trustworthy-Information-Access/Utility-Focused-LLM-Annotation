@@ -11,7 +11,7 @@ import json
 #dataset
 from vllm import LLM, SamplingParams
 from torch.utils.data import DataLoader
-from dataset import EncodeDataset
+from dataset import UtilityEncodeDataset
 from arguments import ModelArguments, DataArguments
 from transformers import (
     HfArgumentParser,
@@ -48,25 +48,18 @@ if __name__ == '__main__':
     dataloader = DataLoader(dataset, batch_size=data_args.batch_size, shuffle=False, collate_fn=collate_fn)
     file_w = open(data_args.output_dir, "w", encoding="utf-8")
     for utility_prompts, relevance_prompts, labels, formated_passageses, formated_passages_idses, query_ids in dataloader:
-        # outputs = llm.generate(utility_prompts, sampling_params)
-        # ress = []
-        # for output in outputs:
-        #     res = output.outputs[0].text
-        #     ress.append(res)
-        outputs_relevance = llm.generate(relevance_prompts, sampling_params)
-        ress_relevance = []
-        for output in outputs_relevance:
+        outputs = llm.generate(utility_prompts, sampling_params)
+        ress = []
+        for output in outputs:
             res = output.outputs[0].text
-            ress_relevance.append(res)
-        # print(query_ids)
+            ress.append(res)
+      
         for i in range(len(query_ids)):
             js = {}
             js["query_id"] = query_ids[i]
             # js["passages"] = formated_passageses[i]
             js["passages_ids"] = formated_passages_idses[i]
-            # js["utility_ranking"] = ress[i]
-            js["answer_output"] = ress[i]
-            # js["relevance_output"] = ress_relevance[i]
+            js["utility_output"] = ress[i]
             file_w.write(json.dumps(js)+"\n")
     
 
