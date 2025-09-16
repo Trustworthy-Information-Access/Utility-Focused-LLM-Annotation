@@ -85,7 +85,7 @@ def get_direct_judge_list_relevance(question, instruct, passages):
 def get_passage_ids():
     id_passages = {}
     id_query = {}
-    with open("results/annotation-candidate.jsonl", "r", encoding="utf-8") as file:
+    with open("results/annotation_candidate.jsonl", "r", encoding="utf-8") as file:
         for line in file:
             js = json.loads(line)
             id_query[js["query_id"]]  = js["query"]
@@ -95,7 +95,7 @@ def get_passage_ids():
 
 def get_relevance_ids():
     id_relevance = {}
-    with open("results/annotation-relevance.jsonl", "r", encoding="utf-8") as file:
+    with open("results/annotation_relevance_process.jsonl", "r", encoding="utf-8") as file:
         for line in file:
             js = json.loads(line)
             passages = []
@@ -107,11 +107,11 @@ def get_relevance_ids():
 
 def get_answers():
     id_answers = {}
-    with open("results/annotation-relevance.jsonl", "r", encoding="utf-8") as file:
+    with open("results/annotation_answer.jsonl", "r", encoding="utf-8") as file:
         for line in file:
             js = json.loads(line)
             if "</think>" in js["answer_output"]:
-                id_answers[js["query_id"]] = js["</think>"].split("assistant:")[1]
+                id_answers[js["query_id"]] = js["answer_output"].split("</think>")[1]
             else:
                 id_answers[js["query_id"]] = js["answer_output"]
     return id_answers
