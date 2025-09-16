@@ -44,7 +44,7 @@ if __name__ == '__main__':
         tensor_parallel_size=8
     )
     # llm = LLM(model=model_args.model_name_or_path, tensor_parallel_size=8)
-    dataset = EncodeDataset(data_args, tokenizer)
+    dataset = RelevanceEncodeDataset(data_args, tokenizer)
     dataloader = DataLoader(dataset, batch_size=data_args.batch_size, shuffle=False, collate_fn=collate_fn)
     file_w = open(data_args.output_dir, "w", encoding="utf-8")
     for utility_prompts, relevance_prompts, labels, formated_passageses, formated_passages_idses, query_ids in dataloader:
