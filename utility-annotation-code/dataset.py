@@ -85,19 +85,17 @@ def get_direct_judge_list_relevance(question, instruct, passages):
 def get_passage_ids():
     id_passages = {}
     id_query = {}
-    with open("/root/paddlejob/workspace/env_run/data/msmarco-pass/repllama-train-tevatron_1.jsonl", "r", encoding="utf-8") as file:
+    with open("results/annotation-candidate.jsonl", "r", encoding="utf-8") as file:
         for line in file:
             js = json.loads(line)
             id_query[js["query_id"]]  = js["query"]
-            passage = js["positive_passages"][0]
-            id_passages[passage["docid"]] = format_passage(passage["text"], passage["title"])
-            for passage in js["negative_passages"]:
+            for passage in js["passages"]:
                 id_passages[passage["docid"]] = format_passage(passage["text"], passage["title"])
     return id_passages, id_query
 
 def get_relevance_ids():
     id_relevance = {}
-    with open("/root/paddlejob/workspace/env_run/output/Qwen-relevance-label_relevance_utility.jsonl", "r", encoding="utf-8") as file:
+    with open("results/annotation-relevance.jsonl", "r", encoding="utf-8") as file:
         for line in file:
             js = json.loads(line)
             passages = []
@@ -109,13 +107,13 @@ def get_relevance_ids():
 
 def get_answers():
     id_answers = {}
-    with open("/root/paddlejob/workspace/env_run/output/Qwen2.5-32B_answer_output.jsonl", "r", encoding="utf-8") as file:
+    with open("results/annotation-relevance.jsonl", "r", encoding="utf-8") as file:
         for line in file:
             js = json.loads(line)
-            if len(js["answer_output"].split("assistant:"))==1:
-                id_answers[js["query_id"]] = ""
+            if "</think>" in js["answer_output"]:
+                id_answers[js["query_id"]] = js["</think>"].split("assistant:")[1]
             else:
-                id_answers[js["query_id"]] = js["answer_output"].split("assistant:")[1]
+                id_answers[js["query_id"]] = js["answer_output"]
     return id_answers
 
 
@@ -125,7 +123,7 @@ def generate_answer_prompt_passages(question, passages):
             {'role': 'assistant', 'content': 'Yes, i am the faithful question and answer assistant.'}, 
             {'role': 'user', 'content': f"Given the information: \n{pas}\n Answer the following question based on the given information with one or few sentences without the source.\n Question: {question}\n\n Answer:"},]
 
-class EncodeDataset(Dataset):
+class RelevanceEncodeDataset(Dataset):
     def __init__(self, data_args: DataArguments, tokenizer):
         print(data_args)
         self.data_args = data_args
@@ -135,9 +133,6 @@ class EncodeDataset(Dataset):
         self.relevance_instruct = """
         Directly output the passages you selected that are relevant to the question. The format of the output is: 'My selection:[[i],[j],...].'. Only response the selection results, do not say any word or explain. 
         """
-        # self.relevance_instruct = """
-        # Rank the 16 passages above based on their relevance to the search query. The passages should be listed in descending order using identifiers, and the most relevant passages should be listed first, and the output format should be [] > [], e.g., [1] > [2]. Only response the ranking results, do not say any word or explain.
-        # """
         self.tokenizer = tokenizer
         self.train_data = load_dataset(
             self.data_args.dataset_name,
@@ -151,9 +146,7 @@ class EncodeDataset(Dataset):
                 num_shards=self.data_args.dataset_number_of_shards,
                 index=self.data_args.dataset_shard_index,
             )
-        # self.id_passages, self.id_querys = get_passage_ids()
-        # self.id_relevance = get_relevance_ids()
-        # self.id_answers = get_answers()
+
 
 
     def __len__(self):
@@ -172,16 +165,117 @@ class EncodeDataset(Dataset):
         for passage in group_negatives:
             formated_passages.append(format_passage(passage["text"], passage["title"]))
             formated_passages_ids.append(passage["docid"])
-        # ids = self.id_relevance[query_id]
-        # for id in ids:
-        #     formated_passages.append(self.id_passages[id])
-        #     formated_passages_ids.append(id)
-        # answer_generation = self.id_answers[query_id]
-        
-        # messages = get_direct_judge_list_utility(query, self.utility_instruct, formated_passages)
-        # utility_prompt = self.tokenizer.apply_chat_template(messages, tokenize=False)
-        # messages = get_direct_judge_list_utility_ranking(query, formated_passages, answer_generation)
         messages = generate_answer_prompt_passages(query, formated_passages)
+        utility_prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
+        
+
+        messages = get_direct_judge_list_relevance(query, self.relevance_instruct, formated_passages)
+        relevance_prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
+        return utility_prompt, relevance_prompt, labels, formated_passages, formated_passages_ids, query_id
+
+
+class AnswerEncodeDataset(Dataset):
+    def __init__(self, data_args: DataArguments, tokenizer):
+        print(data_args)
+        self.data_args = data_args
+        self.utility_instruct = """
+        Directly output the passages you selected that have utility in generating the reference answer to the question. The format of the output is: 'My selection:[[i],[j],...].'. Only response the selection results, do not say any word or explain. 
+        """
+        self.relevance_instruct = """
+        Directly output the passages you selected that are relevant to the question. The format of the output is: 'My selection:[[i],[j],...].'. Only response the selection results, do not say any word or explain. 
+        """
+
+        self.tokenizer = tokenizer
+        self.train_data = load_dataset(
+            self.data_args.dataset_name,
+            self.data_args.dataset_config,
+            data_files=self.data_args.dataset_path,
+            split=self.data_args.dataset_split,
+            cache_dir=self.data_args.dataset_cache_dir,
+        )
+        if self.data_args.dataset_number_of_shards > 1:
+            self.encode_data = self.encode_data.shard(
+                num_shards=self.data_args.dataset_number_of_shards,
+                index=self.data_args.dataset_shard_index,
+            )
+
+
+
+    def __len__(self):
+        return len(self.train_data)
+
+    def __getitem__(self, item) -> Tuple[str, List[int]]:
+        _hashed_seed = hash(item)
+        group = self.train_data[item]
+        query_id = group['query_id']
+        # query = group['query']
+        query = self.id_querys[group['query_id']]
+        labels = []
+        formated_passages = []
+        formated_passages_ids = []
+        group_negatives = group["passages"]
+        for passage in group_negatives:
+            formated_passages.append(format_passage(passage["text"], passage["title"]))
+            formated_passages_ids.append(passage["docid"])
+        messages = generate_answer_prompt_passages(query, formated_passages)
+        utility_prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
+        
+
+        messages = get_direct_judge_list_relevance(query, self.relevance_instruct, formated_passages)
+        relevance_prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
+        return utility_prompt, relevance_prompt, labels, formated_passages, formated_passages_ids, query_id
+
+
+class UtilityEncodeDataset(Dataset):
+    def __init__(self, data_args: DataArguments, tokenizer):
+        print(data_args)
+        self.data_args = data_args
+        self.utility_instruct = """
+        Directly output the passages you selected that have utility in generating the reference answer to the question. The format of the output is: 'My selection:[[i],[j],...].'. Only response the selection results, do not say any word or explain. 
+        """
+        self.relevance_instruct = """
+        Directly output the passages you selected that are relevant to the question. The format of the output is: 'My selection:[[i],[j],...].'. Only response the selection results, do not say any word or explain. 
+        """
+        self.tokenizer = tokenizer
+        self.train_data = load_dataset(
+            self.data_args.dataset_name,
+            self.data_args.dataset_config,
+            data_files=self.data_args.dataset_path,
+            split=self.data_args.dataset_split,
+            cache_dir=self.data_args.dataset_cache_dir,
+        )
+        if self.data_args.dataset_number_of_shards > 1:
+            self.encode_data = self.encode_data.shard(
+                num_shards=self.data_args.dataset_number_of_shards,
+                index=self.data_args.dataset_shard_index,
+            )
+        self.id_passages, self.id_querys = get_passage_ids()
+        self.id_relevance = get_relevance_ids()
+        self.id_answers = get_answers()
+
+
+    def __len__(self):
+        return len(self.train_data)
+
+    def __getitem__(self, item) -> Tuple[str, List[int]]:
+        _hashed_seed = hash(item)
+        group = self.train_data[item]
+        query_id = group['query_id']
+        query = self.id_querys[group['query_id']]
+        labels = []
+        formated_passages = []
+        formated_passages_ids = []
+        group_negatives = group["passages"]
+        for passage in group_negatives:
+            formated_passages.append(format_passage(passage["text"], passage["title"]))
+            formated_passages_ids.append(passage["docid"])
+        ids = self.id_relevance[query_id]
+        for id in ids:
+            formated_passages.append(self.id_passages[id])
+            formated_passages_ids.append(id)
+        answer_generation = self.id_answers[query_id]
+        
+        messages = get_direct_judge_list_utility(query, self.utility_instruct, formated_passages)
         utility_prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
         
 
