@@ -11,7 +11,7 @@ import json
 #dataset
 from vllm import LLM, SamplingParams
 from torch.utils.data import DataLoader
-from dataset import EncodeDataset
+from dataset import AnswerEncodeDataset
 from arguments import ModelArguments, DataArguments
 from transformers import (
     HfArgumentParser,
