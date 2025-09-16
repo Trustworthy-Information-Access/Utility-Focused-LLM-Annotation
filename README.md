@@ -1,5 +1,5 @@
 # Utility-focused-annotation
-[🎉 2025-09] MS MARCO and NQ annotations are released in [Hugging Face](hengranZhang/Utility_focused_annotation).
+[🎉 2025-09] MS MARCO and NQ annotations are released in [Hugging Face](hengranZhang/Utility_focused_annotation).      
 [🎉 2025-08] Our paper "Utility-Focused LLM Annotation for Retrieval and Retrieval-Augmented Generation" has been accepted at #EMNLP25 for the main conference! 
 
 # Overview
