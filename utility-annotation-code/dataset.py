@@ -43,20 +43,19 @@ def get_prefix_direct_judge_list_utility(query, num):
              'content': "You are the utility judger, an intelligent assistant that can select the passages that have utility in answering the question."},
             {'role': 'assistant', 'content': 'Yes, i am the utility judger.'},
             {'role': 'user',
-             'content': f"I will provide you with {num} passages, each indicated by number identifier []. \nSelect the passages that have utility in answering the question: {query}."},
-            {'role': 'assistant', 'content': 'Okay, please provide the passages.'}]
-def get_post_direct_judge_list_utility(query, instruct):
-    return f"Question: {query}.\n\n The requirements for judging whether a passage has utility in answering the question are: The passage has utility in answering the question, meaning that the passage not only be relevant to the question, but also be useful in generating a correct, reasonable and perfect answer to the question. \n"+instruct
-def get_direct_judge_list_utility(question, instruct, passages, max_length=300):
+             'content': f"I will provide you with {num} passages, each indicated by number identifier []. \n I will also provide you with a reference answer to the question. \nSelect the passages that have utility in generating the reference answer to the following question from the {num} passages: {query}."},
+            {'role': 'assistant', 'content': 'Okay, please provide the passages and the reference answer.'}]
+def get_post_direct_judge_list_utility(query, instruct, answer):
+    return f"Question: {query}. \n Reference answer: {answer}. \n\n The requirements for judging whether a passage has utility in answering the question are: The passage has utility in answering the question, meaning that the passage not only be relevant to the question, but also be useful in generating a correct, reasonable and perfect answer to the question. \n"+instruct
+
+def get_direct_judge_list_utility(question, instruct, passages, answer):
     messages = get_prefix_direct_judge_list_utility(question, len(passages))
     rank = 0
     for content in passages:
-        if len(content.split(" ")) > int(max_length):
-            content = " ".join(content.split(" ")[:int(max_length)])
         rank += 1
         messages.append({'role': 'user', 'content': f"[{rank}] {content}"})
         messages.append({'role': 'assistant', 'content': f'Received passage [{rank}].'})
-    messages.append({'role': 'user', 'content': get_post_direct_judge_list_utility(question, instruct)})
+    messages.append({'role': 'user', 'content': get_post_direct_judge_list_utility(question, instruct, answer)})
     return messages
 #####################################################################
 def get_prefix_direct_judge_list_relevance(query, num):
@@ -278,7 +277,7 @@ class UtilityEncodeDataset(Dataset):
             formated_passages_ids.append(id)
         answer_generation = self.id_answers[query_id]
         
-        messages = get_direct_judge_list_utility(query, self.utility_instruct, formated_passages)
+        messages = get_direct_judge_list_utility(query, self.utility_instruct, formated_passages, answer_generation)
         utility_prompt = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
         
 
