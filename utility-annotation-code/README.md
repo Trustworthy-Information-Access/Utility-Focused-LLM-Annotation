@@ -21,7 +21,7 @@
    output_dir="results/annotation_answer.jsonl"
    mkdir $output_dir
    train_group_size=16
-   python pseudo_answer.py --model_name_or_path $model_name_or_path --dataset_path $dataset_path --train_group_size $train_group_size  --batch_size 4096 --output_dir $output_dir
+   python pseudo_answer.py --model_name_or_path $model_name_or_path --passages_corpus $passages_corpus --relevence_file_path $relevence_file_path  --dataset_path $dataset_path --train_group_size $train_group_size  --batch_size 4096 --output_dir $output_dir
    ```
    
    
@@ -36,6 +36,6 @@
    output_dir="results/annotation_utility.jsonl"
    mkdir $output_dir
    train_group_size=16
-   python utility_selection.py --model_name_or_path $model_name_or_path --dataset_path $dataset_path --train_group_size $train_group_size --batch_size 4096 --output_dir $output_dir
+   python utility_selection.py --model_name_or_path $model_name_or_path --passages_corpus $passages_corpus --relevence_file_path $relevence_file_path --answer_file_path $answer_file_path  --dataset_path $dataset_path --train_group_size $train_group_size --batch_size 4096 --output_dir $output_dir
    ```
 
