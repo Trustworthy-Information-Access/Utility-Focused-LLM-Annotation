@@ -74,6 +74,9 @@ class ModelArguments:
 
 @dataclass
 class DataArguments:
+    passages_corpus: str = field(
+        default='json', metadata={"help": "huggingface dataset name"}
+    )
     output_dir: str = field(
         default='json', metadata={"help": "huggingface dataset name"}
     )
