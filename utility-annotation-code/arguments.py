@@ -18,50 +18,7 @@ class ModelArguments:
     cache_dir: Optional[str] = field(
         default=None, metadata={"help": "Where do you want to store the pretrained models downloaded from s3"}
     )
-
-    pooling: str = field(
-        default='cls',
-        metadata={"help": "pooling method for query and passage encoder"}
-    )
-    normalize: bool = field(
-        default=False,
-        metadata={"help": "normalize query and passage representations"}
-    )
-
-    temperature: float = field(
-        default=1.0,
-        metadata={"help": "temperature for softmax"}
-    )
-
-    # for lora
-    lora: bool = field(default=False,
-        metadata={"help": "do parameter-efficient fine-tuning with lora"}
-    )
-
-    lora_name_or_path: Optional[str] = field(
-        default=None, metadata={"help": "Path to pretrained lora model or model identifier from huggingface.co/models"}
-    )
-
-    lora_r: int = field(
-        default=8,
-        metadata={"help": "lora r"}
-    )
-
-    lora_alpha: int = field(
-        default=64,
-        metadata={"help": "lora alpha"}
-    )
-
-    lora_dropout: float = field(
-        default=0.1,
-        metadata={"help": "lora dropout"}
-    )
-
-    lora_target_modules: str = field(
-        default="q_proj,k_proj,v_proj,o_proj,down_proj,up_proj,gate_proj",
-        metadata={"help": "lora target modules"}
-    )
-
+   
     # for Jax training
     dtype: Optional[str] = field(
         default="float32",
@@ -75,10 +32,16 @@ class ModelArguments:
 @dataclass
 class DataArguments:
     passages_corpus: str = field(
-        default='json', metadata={"help": "huggingface dataset name"}
+        default='json', metadata={"help": "corpus of candidate passages"}
+    )
+    relevence_file_path: str = field(
+        default='json', metadata={"help": "processed file of the relevance selection"}
+    )
+    answer_file_path: str = field(
+        default='json', metadata={"help": "processed file of the pseudo-answer generation"}
     )
     output_dir: str = field(
-        default='json', metadata={"help": "huggingface dataset name"}
+        default='json', metadata={"help": "output file path"}
     )
     dataset_name: str = field(
         default='json', metadata={"help": "huggingface dataset name"}
