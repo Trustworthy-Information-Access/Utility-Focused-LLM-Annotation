@@ -11,6 +11,8 @@ def get_direct_judge_list_utility_ranking(query, passages, answer):
     rank = 0
     for passage in passages:
         rank += 1
+        if len(passage.split(" ")) > 300:
+            passage = " ".join(passage.split(" ")[:300])
         content = passage
         messages.append({'role': 'user', 'content': f"[{rank}] {content}"})
         messages.append({'role': 'assistant', 'content': f'Received passage [{rank}].'})
@@ -50,6 +52,8 @@ def get_direct_judge_list_utility(question, instruct, passages):
     messages = get_prefix_direct_judge_list_utility(question, len(passages))
     rank = 0
     for content in passages:
+        if len(content.split(" ")) > 300:
+            content = " ".join(content.split(" ")[:300])
         rank += 1
         messages.append({'role': 'user', 'content': f"[{rank}] {content}"})
         messages.append({'role': 'assistant', 'content': f'Received passage [{rank}].'})
@@ -78,6 +82,8 @@ def get_direct_judge_list_relevance(question, instruct, passages):
     rank = 0
     for content in passages:
         rank += 1
+        if len(content.split(" ")) > 300:
+            content = " ".join(content.split(" ")[:300])
         messages.append({'role': 'user', 'content': f"[{rank}] {content}"})
         messages.append({'role': 'assistant', 'content': f'Received passage [{rank}].'})
     messages.append({'role': 'user', 'content': get_post_direct_judge_list_relevance(question, instruct)})
