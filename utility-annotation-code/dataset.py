@@ -5,16 +5,15 @@ from typing import List, Tuple
 from arguments import DataArguments
 import json
 #####################################################################
-def get_direct_judge_list_utility_ranking(query, passages, answer):
+def get_direct_judge_list_utility_ranking(query, passages, answer, max_length=300):
     num = len(passages)
     messages = get_prefix_direct_judge_list_utility_ranking(query, num, answer)
     rank = 0
     for passage in passages:
         rank += 1
-        if len(passage.split(" ")) > 300:
-            passage = " ".join(passage.split(" ")[:300])
-        content = passage
-        messages.append({'role': 'user', 'content': f"[{rank}] {content}"})
+        if len(passage.split(" ")) > int(max_length):
+            passage = " ".join(passage.split(" ")[:int(max_length)])
+        messages.append({'role': 'user', 'content': f"[{rank}] {passage}"})
         messages.append({'role': 'assistant', 'content': f'Received passage [{rank}].'})
     messages.append({'role': 'user', 'content': get_post_prompt_utility_ranking(query, num, answer)})
     return messages
@@ -48,12 +47,12 @@ def get_prefix_direct_judge_list_utility(query, num):
             {'role': 'assistant', 'content': 'Okay, please provide the passages.'}]
 def get_post_direct_judge_list_utility(query, instruct):
     return f"Question: {query}.\n\n The requirements for judging whether a passage has utility in answering the question are: The passage has utility in answering the question, meaning that the passage not only be relevant to the question, but also be useful in generating a correct, reasonable and perfect answer to the question. \n"+instruct
-def get_direct_judge_list_utility(question, instruct, passages):
+def get_direct_judge_list_utility(question, instruct, passages, max_length=300):
     messages = get_prefix_direct_judge_list_utility(question, len(passages))
     rank = 0
     for content in passages:
-        if len(content.split(" ")) > 300:
-            content = " ".join(content.split(" ")[:300])
+        if len(content.split(" ")) > int(max_length):
+            content = " ".join(content.split(" ")[:int(max_length)])
         rank += 1
         messages.append({'role': 'user', 'content': f"[{rank}] {content}"})
         messages.append({'role': 'assistant', 'content': f'Received passage [{rank}].'})
@@ -77,13 +76,13 @@ def get_prefix_direct_judge_list_relevance(query, num):
 #             {'role': 'assistant', 'content': 'Okay, please provide the passages.'}]
 def get_post_direct_judge_list_relevance(query, instruct):
     return f"Search Query: {query}."+instruct
-def get_direct_judge_list_relevance(question, instruct, passages):
+def get_direct_judge_list_relevance(question, instruct, passages, max_length=300):
     messages = get_prefix_direct_judge_list_relevance(question, len(passages))
     rank = 0
     for content in passages:
         rank += 1
-        if len(content.split(" ")) > 300:
-            content = " ".join(content.split(" ")[:300])
+        if len(content.split(" ")) > int(max_length):
+            content = " ".join(content.split(" ")[:int(max_length)])
         messages.append({'role': 'user', 'content': f"[{rank}] {content}"})
         messages.append({'role': 'assistant', 'content': f'Received passage [{rank}].'})
     messages.append({'role': 'user', 'content': get_post_direct_judge_list_relevance(question, instruct)})
