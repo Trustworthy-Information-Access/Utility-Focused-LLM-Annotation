@@ -198,6 +198,8 @@ class AnswerEncodeDataset(Dataset):
             split=self.data_args.dataset_split,
             cache_dir=self.data_args.dataset_cache_dir,
         )
+        self.id_passages, self.id_querys = get_passage_ids(self.data_args.passages_corpus)
+        self.id_relevance = get_relevance_ids(self.data_args.relevence_file_path)
         if self.data_args.dataset_number_of_shards > 1:
             self.encode_data = self.encode_data.shard(
                 num_shards=self.data_args.dataset_number_of_shards,
