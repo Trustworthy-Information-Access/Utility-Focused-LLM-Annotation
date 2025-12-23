@@ -41,18 +41,20 @@ def format_passage(text: str, title: str = '') -> str:
 def get_prefix_direct_judge_list_utility(query, num):
     return [{'role': 'user',
              'content': "You are the utility judger, an intelligent assistant that can select the passages that have utility in answering the question."},
-            {'role': 'assistant', 'content': 'Yes, i am the utility judger.'},
+            {'role': 'assistant', 'content': 'Yes, I am the utility judger.'},
             {'role': 'user',
              'content': f"I will provide you with {num} passages, each indicated by number identifier []. \n I will also provide you with a reference answer to the question. \nSelect the passages that have utility in generating the reference answer to the following question from the {num} passages: {query}."},
             {'role': 'assistant', 'content': 'Okay, please provide the passages and the reference answer.'}]
 def get_post_direct_judge_list_utility(query, instruct, answer):
     return f"Question: {query}. \n Reference answer: {answer}. \n\n The requirements for judging whether a passage has utility in answering the question are: The passage has utility in answering the question, meaning that the passage not only be relevant to the question, but also be useful in generating a correct, reasonable and perfect answer to the question. \n"+instruct
 
-def get_direct_judge_list_utility(question, instruct, passages, answer):
+def get_direct_judge_list_utility(question, instruct, passages, answer, max_length=300):
     messages = get_prefix_direct_judge_list_utility(question, len(passages))
     rank = 0
     for content in passages:
         rank += 1
+        if len(content.split(" ")) > int(max_length):
+            content = " ".join(content.split(" ")[:int(max_length)])
         messages.append({'role': 'user', 'content': f"[{rank}] {content}"})
         messages.append({'role': 'assistant', 'content': f'Received passage [{rank}].'})
     messages.append({'role': 'user', 'content': get_post_direct_judge_list_utility(question, instruct, answer)})
@@ -60,8 +62,8 @@ def get_direct_judge_list_utility(question, instruct, passages, answer):
 #####################################################################
 def get_prefix_direct_judge_list_relevance(query, num):
     return [{'role': 'user',
-             'content': "You are the relevance judger, an intelligent assistant that can select the passages that relevant to the question."},
-            {'role': 'assistant', 'content': 'Yes, i am the relevance judger.'},
+             'content': "You are the relevance judger, an intelligent assistant that can select the passages that are relevant to the question."},
+            {'role': 'assistant', 'content': 'Yes, I am the relevance judger.'},
             {'role': 'user',
              'content': f"I will provide you with {num} passages, each indicated by number identifier []. \nSelect the passages that are relevant to the question: {query}."},
             {'role': 'assistant', 'content': 'Okay, please provide the passages.'}]
@@ -123,9 +125,9 @@ def get_answers(answer_file):
 
 def generate_answer_prompt_passages(question, passages):
     pas = '\n'.join(passages)
-    return [{'role': 'user', 'content': f"You are a faithful question and answer assistant. Answer the question based on the given information with one or few sentences without the source."}, 
+    return [{'role': 'user', 'content': f"You are a faithful question and answer assistant. Answer the question based on the given information with one or a few sentences without the source."}, 
             {'role': 'assistant', 'content': 'Yes, i am the faithful question and answer assistant.'}, 
-            {'role': 'user', 'content': f"Given the information: \n{pas}\n Answer the following question based on the given information with one or few sentences without the source.\n Question: {question}\n\n Answer:"},]
+            {'role': 'user', 'content': f"Given the information: \n{pas}\n Answer the following question based on the given information with one or a few sentences without the source.\n Question: {question}\n\n Answer:"},]
 
 class RelevanceEncodeDataset(Dataset):
     def __init__(self, data_args: DataArguments, tokenizer):
