@@ -265,10 +265,10 @@ class UtilityEncodeDataset(Dataset):
         labels = []
         formated_passages = []
         formated_passages_ids = []
-        group_negatives = group["passages"]
-        for passage in group_negatives:
-            formated_passages.append(format_passage(passage["text"], passage["title"]))
-            formated_passages_ids.append(passage["docid"])
+        # group_negatives = group["passages"]
+        # for passage in group_negatives:
+        #     formated_passages.append(format_passage(passage["text"], passage["title"]))
+        #     formated_passages_ids.append(passage["docid"])
         ids = self.id_relevance[query_id]
         for id in ids:
             formated_passages.append(self.id_passages[id])
