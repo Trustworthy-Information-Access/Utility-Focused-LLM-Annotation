@@ -82,10 +82,10 @@ def get_direct_judge_list_relevance(question, instruct, passages):
         messages.append({'role': 'assistant', 'content': f'Received passage [{rank}].'})
     messages.append({'role': 'user', 'content': get_post_direct_judge_list_relevance(question, instruct)})
     return messages
-def get_passage_ids():
+def get_passage_ids(passages_corpus_file):
     id_passages = {}
     id_query = {}
-    with open("results/annotation_candidate.jsonl", "r", encoding="utf-8") as file:
+    with open(passages_corpus_file, "r", encoding="utf-8") as file:
         for line in file:
             js = json.loads(line)
             id_query[js["query_id"]]  = js["query"]
@@ -93,9 +93,9 @@ def get_passage_ids():
                 id_passages[passage["docid"]] = format_passage(passage["text"], passage["title"])
     return id_passages, id_query
 
-def get_relevance_ids():
+def get_relevance_ids(relevance_file):
     id_relevance = {}
-    with open("results/annotation_relevance_process.jsonl", "r", encoding="utf-8") as file:
+    with open(relevance_file, "r", encoding="utf-8") as file:
         for line in file:
             js = json.loads(line)
             passages = []
@@ -105,9 +105,9 @@ def get_relevance_ids():
             id_relevance[js["query_id"]] = passages
     return id_relevance
 
-def get_answers():
+def get_answers(answer_file):
     id_answers = {}
-    with open("results/annotation_answer.jsonl", "r", encoding="utf-8") as file:
+    with open(answer_file, "r", encoding="utf-8") as file:
         for line in file:
             js = json.loads(line)
             if "</think>" in js["answer_output"]:
@@ -249,9 +249,9 @@ class UtilityEncodeDataset(Dataset):
                 num_shards=self.data_args.dataset_number_of_shards,
                 index=self.data_args.dataset_shard_index,
             )
-        self.id_passages, self.id_querys = get_passage_ids()
-        self.id_relevance = get_relevance_ids()
-        self.id_answers = get_answers()
+        self.id_passages, self.id_querys = get_passage_ids(self.data_args.passages_corpus)
+        self.id_relevance = get_relevance_ids(self.data_args.relevence_file_path)
+        self.id_answers = get_answers(self.data_args.answer_file_path)
 
 
     def __len__(self):
@@ -265,10 +265,6 @@ class UtilityEncodeDataset(Dataset):
         labels = []
         formated_passages = []
         formated_passages_ids = []
-        # group_negatives = group["passages"]
-        # for passage in group_negatives:
-        #     formated_passages.append(format_passage(passage["text"], passage["title"]))
-        #     formated_passages_ids.append(passage["docid"])
         ids = self.id_relevance[query_id]
         for id in ids:
             formated_passages.append(self.id_passages[id])
